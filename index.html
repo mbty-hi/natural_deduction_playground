@@ -814,7 +814,7 @@
       display: flex; gap: 1em; justify-content: space-around; margin-top: 1.2em;
       flex-wrap: wrap;"
   >
-    <div class="action pseudo-button" onclick="open_level_panel()">Select level</div>
+    <div class="action pseudo-button" onclick="open_level_panel()">Select exercise</div>
     <div style="display: flex; flex-direction: row; gap: 2em;">
       <div class="action pseudo-button" onclick="import_data()">Import</div>
       <div class="action pseudo-button" onclick="export_data()">Export</div>
@@ -914,8 +914,8 @@
         id="add-premise-button" class="expr pseudo-button" onclick="add_premise()"
         style="
           background-color: var(--lgreen);
-          color: color-mix(var(--green), var(--level-c) 30%);
-          border-color: color-mix(var(--green), var(--level-a) 30%);
+          color: color-mix(hsl(120 30% 50%), hsl(240 10% 35%) 30%);
+          border-color: color-mix(hsl(120 30% 50%), hsl(240 10% 17%) 30%);
           border-radius: 10px;
           height: 38px;
           padding: 0 10px;"
@@ -1203,11 +1203,11 @@
   }
 
   .known {
-    background-color: color-mix(var(--green), var(--level-c) 50%) !important;
+    background-color: color-mix(hsl(120 30% 50%), hsl(240 10% 35%) 50%) !important;
   }
 
   #known-cause {
-    background-color: color-mix(var(--lyellow), var(--level-c) 50%) !important;
+    background-color: color-mix(hsl(60  50% 70%), hsl(240 10% 35%) 50%) !important;
   }
 </style>
 
