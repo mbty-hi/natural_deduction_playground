@@ -324,7 +324,6 @@ function rebuild_level(actions) {
 
 function load_current_level() {
   const data = exercises_data[current_exercise].save_data;
-  console.log(data);
   setup();
   if (data) {
     rebuild_level(data);
@@ -828,7 +827,7 @@ function or_elim(expr, arg) {
 }
 function iff_elim_l(expr, arg) {
   add_hyp({"type": "Iff", "e1": expr, "e2": arg});
-  add_hyp(other_branch);
+  add_hyp(arg);
 }
 function iff_elim_r(expr, arg) {
   add_hyp({"type": "Iff", "e1": arg, "e2": expr});
