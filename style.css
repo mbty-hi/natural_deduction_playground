@@ -29,14 +29,6 @@
   font-family: "aile";
   src: url("fonts/mbty_Iosevka-Aile.woff2") format("woff2");
 }
-@font-face {
-  font-family: "etoile";
-  src: url("fonts/mbty_Iosevka-Etoile.woff2") format("woff2");
-}
-@font-face {
-  font-family: "etoile-light";
-  src: url("fonts/mbty_Iosevka-Etoile-Extralight.woff2") format("woff2");
-}
 
 
 /* GENERAL */
