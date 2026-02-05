@@ -70,7 +70,7 @@ var exercises_data = [
 //               \-------> HTML
 // Serializing/deserializing done via JSON.stringify/JSON.parse
 // String to inductive done in a later section (see tokenize and parse_input_field functions)
-function tree_to_html(tree) { // Serialized inductive -> HTML
+function tree_to_html(tree) { // Inductive -> HTML
   function tree_to_html_aux(tree) {
     switch (tree.type) {
       case "Var"  : return `<div class='expr'>${tree.name}</div>`;

@@ -416,5 +416,5 @@ p.center {
 }
 
 #known-cause {
-  background-color: color-mix(in srgb, hsl(60  50% 70%), hsl(240 10% 35%) 50%) !important;
+  background-color: color-mix(in srgb, hsl(60  50% 30%), hsl(240 10% 35%) 50%) !important;
 }
