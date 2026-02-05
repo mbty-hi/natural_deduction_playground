@@ -390,6 +390,7 @@ window.addEventListener("pagehide", () => { persistent_save(); });
 
 function persistent_clear() { // For manual use only
   const saved = localStorage.removeItem("persistent_state");
+  persistent_load();
 }
 
 function persistent_load() {
