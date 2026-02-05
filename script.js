@@ -136,6 +136,30 @@ function update_status_of_lower_tree(level) {
 }
 
 
+// Focus and highlight management
+function highlight_cause(node) {
+  let known = node.known;
+  if (known) {
+    known.id = "known-cause";
+  }
+}
+
+function set_focus(source) {
+  if (focus && focus !== source) {
+    let known = focus.known;
+    if (known) {
+      known.removeAttribute("id");
+    }
+    focus.removeAttribute("id");
+  }
+
+  focus = source;
+  focus.setAttribute("id", "focus");
+  update_contextual_actions();
+
+  highlight_cause(focus);
+}
+
 
 // Level management
 function populate_level_selector() { // Dynamically, using exercises_data
@@ -848,31 +872,6 @@ function not_elim(expr, arg) {
 }
 
 
-// Focus and highlight management
-function highlight_cause(node) {
-  let known = node.known;
-  if (known) {
-    known.id = "known-cause";
-  }
-}
-
-function set_focus(source) {
-  if (focus && focus !== source) {
-    let known = focus.known;
-    if (known) {
-      known.removeAttribute("id");
-    }
-    focus.removeAttribute("id");
-  }
-
-  focus = source;
-  focus.setAttribute("id", "focus");
-  update_contextual_actions();
-
-  highlight_cause(focus);
-}
-
-
 // Premises management
 function recheck_status_of_whole_tree() { // Inserting/removing premises can change everything
   let og_focus = focus;
@@ -955,6 +954,11 @@ function confirm_change() {
 }
 function apply_change() {
   open_input_panel("New value for node:", confirm_change);
+}
+
+function reset_current_exercise() {
+  set_focus(proof.children[0].children[2].children[0]);
+  apply_clear_above();
 }
 
 
