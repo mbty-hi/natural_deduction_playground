@@ -2,9 +2,9 @@
 :root {
   --black    : hsl(240 10%  5%);
   --dark     : hsl(240 10% 14%);
-  --level-a  : hsl(240 10% 17%);
-  --level-b  : hsl(240 10% 22%);
-  --level-c  : hsl(240 10% 35%);
+  --level-a  : hsl(240 10% 20%);
+  --level-b  : hsl(240 10% 30%);
+  --level-c  : hsl(240 10% 40%);
   --white    : hsl(240 15% 99%);
   --ghost    : hsl(240  5% 60%);
   --link     : hsl(240 38% 72%);
