@@ -20,6 +20,7 @@ var input_panel_confirm = document.getElementById("input-panel-confirm");
 var input_panel_error   = document.getElementById("input-panel-error-message");
 var intro_rules_holder  = document.getElementById("intro-rules-holder");
 var level_panel         = document.getElementById("level-panel");
+var help_panel          = document.getElementById("help-panel");
 var focus               = document.getElementById("focus");
 var drag_box            = document.getElementById("drag-box");
 var intro_rules         = document.getElementById("intro-rules");
@@ -34,8 +35,8 @@ var level_gallery       = document.getElementById("level-gallery");
 
 // Configuration
 var exercise_mode = true;
-var current_exercise = 0; // overridden when loading persistent data
-const version = 1; // for import/export
+var current_execise = 0; // overridden when loading persistent data
+const version =1; // for import/export
 
 
 // Exercises
@@ -392,6 +393,32 @@ function switch_to_level(n) {
 }
 
 
+// Help panel
+var is_help_panel_open = false; // Yay, more global state
+function open_help_panel() {
+  is_help_panel_open = true;
+  help_panel.style.display = "block";
+  document.documentElement.style.overflow = "hidden";
+  document.body.scroll = "no";
+  help_panel.focus();
+}
+
+function close_help_panel() {
+  is_help_panel_open = false;
+  help_panel.style.display = "none";
+  document.documentElement.style.overflow = "scroll";
+  document.body.scroll = "yes";
+}
+
+function close_help_panel_click_handler(event, element) {
+  if (event.target == element) {
+    close_help_panel();
+  } else {
+    event.stopPropagation();
+  }
+}
+
+
 // Persistent data management
 function persistent_save() {
   save_current_level();
@@ -679,13 +706,17 @@ document.onkeydown = function(evt) {
       close_level_panel();
     }
   }
+  else if (is_help_panel_open && "key" in evt) {
+    if (evt.key === "Escape" || evt.key === "Esc") {
+      close_help_panel();
+    }
+  }
 }
 
 
 // Rules
-// Note: we do not draw separators and the tree as neatly as we could. Right now, they a separator
-// is always as wide as all the subtrees sitting above it, which is not how things are usually
-// done.
+// Note: we do not draw separators and the tree as neatly as we could. Right now, a separator is
+// always as wide as all the subtrees sitting above it, which is not how it is done in Van Dalen.
 function set_separator(name) {
   let sep = focus.parentNode.parentNode.children[1];
   sep.innerHTML = `<div class=sep-bar></div><div class=sep-name>${name}</div>`;
@@ -1059,6 +1090,50 @@ slider.addEventListener("mousemove", move, false);
 slider.addEventListener("mousedown", startDragging, false);
 slider.addEventListener("mouseup", stopDragging, false);
 slider.addEventListener("mouseleave", stopDragging, false);
+
+
+// Themes
+function invert_lightness() {
+  const root = document.querySelector(':root');
+  const css_variables = [
+    "--black"  , "--level-a", "--level-b", "--level-c", "--white" , "--ghost", "--link" ,
+    "--link-hv", "--link-vs", "--emph"   , "--red"    , "--yellow", "--green", "--cyan" ,
+    "--blue"   , "--magenta", "--lred"   , "--lyellow", "--lgreen", "--lcyan", "--lblue",
+    "--lmagenta"
+
+  ];
+
+  function invert_255(x) { return 255 - x; }
+  function invert_100(x) { return 100 - x; }
+
+  function get_hue(s) {
+    s = s.substring(s.indexOf("(") + 1);
+    return s.split(" ")[0];
+  }
+  function get_saturation(s) {
+    s = s.split("%")[0];
+    s = s.split(" ");
+    return s[s.length - 1]
+  }
+  function get_lightness(s) {
+    s = s.split("%")[1];
+    s = s.split(" ");
+    return s[s.length - 1]
+  }
+
+  function to_color_string(h, s, l) {
+    return "hsl(" + h + " " + s + "% " + l + "%)";
+  }
+
+  let rc = getComputedStyle(root);
+  for (v of css_variables) {
+    let v_string = rc.getPropertyValue(v);
+    let h = invert_255(get_hue(v_string));
+    let s = get_saturation(v_string);
+    let l = invert_100(get_lightness(v_string));
+    root.style.setProperty(v, to_color_string(h, s, l));
+  }
+}
 
 
 // Initialization

@@ -16,6 +16,89 @@
 <div
   id=content style="min-height: 100%; display:flex; flex-direction: column; margin-bottom: 10px;"
 >
+  <!-- Help panel, hidden by default -->
+  <div id=help-panel style="display: none;" onclick="close_help_panel_click_handler(event, this)">
+    <div
+      style="font-size: 200%; position: absolute; top: 20px; right: 20px; cursor: pointer;"
+      onclick="close_help_panel()">&times;
+    </div>
+    <div class=center style="width: 100%; center; max-width: 850px;">
+      <h2>How this works</h2>
+      <p style="margin-bottom: 0;">
+      There are seven exercises to solve (use the "Select exercise" button on the top left to check
+      your progress). An exercise is made of two elements:
+      </p>
+      <ul style="margin-top: 8px;">
+        <li>A (possibly empty) set of premises</li>
+        <li>A proposition</li>
+      </ul>
+
+      <p>
+      Your job is to prove propositions by building proof trees for them. To set the focus to a
+      specific node in your tree, simply click on it (there is always one focused node and it is
+      outlined in bold). You can then apply any of the rules compatible with that node using the
+      buttons in the other panel. Note that some of the rules can be applied to any node (e.g.,
+      ⊥-elim), whereas others are context-dependent (e.g., the last step in a proof tree for A ∧ B
+      can not be ∨-intro-l). The system only shows rules compatible with the node under focus.
+      If that node is a leaf, applying a rule will turn it into a branch node with one leaf per
+      premise of the corresponding natural deduction inference rule. Otherwise, the branch node gets
+      turned into a leaf node (the system clears everything above it) and the rule gets applied to
+      it.
+      </p>
+
+      <p>
+      Different rules act in different ways. Some of them expect an user-provided expression: in
+      that case, just input something sensible in the panel that automatically opens. Some (such as
+      →-intro) implicitly introduce local hypotheses that act like premises in the rest of the
+      branch. Use an external reference for the moral justification as to why the inference rules
+      behave the way they do.
+      </p>
+
+      <p>
+      <b style="color: var(--red); margin-bottom: 0">Caveat:</b> the rules implemented here are a
+      slight departure from those given by Van Dalen, though the resulting systems are equivalent
+      (i.e., anything that can be proven with Van Dalen's rules can be proven here, and vice versa;
+      proving that is an optional exercise left to the reader). The differences are:
+      </p>
+      <ul style="margin-top: 8px;">
+        <li>
+          The classical logic inference rule DNE (double-negation elimination) is provided
+        </li>
+        <li>
+          Several rules (such as ∨-elim) work with explicit implications instead of introducing
+          branch-local hypotheses; if what this means is not clear to you, just click the button and
+          see how it differs from what the book says. To get back to the version of the book, just
+          use an explicit →-intro: you can view Van Dalen's version as syntactic sugar for that
+        </li>
+        <li>
+          No distinction is made between ⊥-elim and RAA (reductio ad absurdum): ⊥-elim behaves like
+          the more powerful RAA (this does not change much in practice; you just get a hypothesis
+          for free in the ⊥-elim case)
+        </li>
+      </ul>
+
+      <p>
+      I will change the system so as to make it match the book after submissions (I don't want to
+      make breaking changes while people are still working on this).
+      </p>
+
+      <p>
+      A leaf is automatically marked as done by the system whenever a matching premise or a local
+      hypothesis (as implicitly introduced by →-intro or RAA) is found. Leaves that are done turn
+      green. Branch nodes such that all the nodes sitting directly atop them are done are themselve
+      marked as done and turn green. Focusing a done leaf nodes highlights a justification for it
+      being done in yellow: either a premise or a node/subexpression lower in the same branch. The
+      whole exercise is done when the root node is marked as done, in which case the entire
+      background turns green.
+      </p>
+
+      <p>
+      If you get stuck, I advise to do proofs with pen-and-paper first and to port them to this
+      system later. Also remember that you are welcome to submit pen-and-paper proofs.
+      </p>
+    </div>
+  </div>
+
   <!-- Level selection panel, hidden by default -->
   <div
     id=level-panel style="display: none;" onclick="close_level_panel_click_handler(event, this)"
@@ -103,6 +186,15 @@
   </p>
 
   <div
+    class="pseudo-button action"
+    style="
+      width: 30px; height: 30px; font-size: large; display: flex; justify-content: center;
+      align-items: center; position: fixed; top: 0; right: 0; margin: 30px;
+    "
+    onclick="open_help_panel()"
+  >?</div>
+
+  <div
     class=box
     style="
       display: flex; gap: 1em; justify-content: space-around; margin-top: 1.2em;
@@ -183,13 +275,13 @@
       </div>
 
       <div class=rules-box id=intro-rules>
-        Specific rules:
+        Context-dependent rules:
         <div class=rules id=intro-rules-holder style="display: flex; height: 3em;">
         </div>
       </div>
 
       <div class=rules-box id=elim-rules>
-        General rules:
+        Always applicable rules:
         <div class=rules style="display: flex; flex-wrap: wrap; width: fit-content;">
           <div class="rule pseudo-button" onclick='apply_rule_with_arg("↔-elim-l", "Right branch of the iff:", iff_elim_l)'>↔-elim-l</div>
           <div class="rule pseudo-button" onclick='apply_rule_with_arg("↔-elim-r", "Left branch of the iff:", iff_elim_r)'>↔-elim-r</div>
@@ -197,13 +289,13 @@
           <div class="rule pseudo-button" onclick='apply_rule_with_arg("∧-elim-r", "Left branch of the and:", and_elim_r)'>∧-elim-r</div>
           <div class="rule pseudo-button" onclick='apply_rule_with_arg("∨-elim", "Or hypothesis:", or_elim, validate_or_input)'>∨-elim</div>
           <div class="rule pseudo-button" onclick='apply_rule("DNE (classical)", dne)'>DNE</div>
-          <div class="rule pseudo-button" onclick='apply_rule("⊥-elim", false_elim)'>⊥-elim</div>
+          <div class="rule pseudo-button" onclick='apply_rule("⊥-elim", false_elim)'>⊥-elim/RAA</div>
           <div class="rule pseudo-button" onclick='apply_rule_with_arg("→-elim", "Implication condition:", impl_elim)'>→-elim</div>
         </div>
       </div>
 
       <div class=rules-box id=special-rules>
-        Special:
+        Other:
         <div class=rules style="display: flex; flex-wrap: wrap; width: fit-content;">
           <div class="rule pseudo-button" onclick="apply_clear_above()">clear above</div>
           <div id="as-premise-button" class="rule pseudo-button" onclick="apply_as_premise()">as premise</div>

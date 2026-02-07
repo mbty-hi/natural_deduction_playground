@@ -344,29 +344,14 @@ p.center {
   font-size: small;
 }
 
-#input-panel {
+#input-panel, #level-panel, #help-panel {
   position: fixed;
   left: 0;
   right: 0;
   top: 0;
   bottom: 0;
   height: 100%;
-  background-color: hsla(240, 10%, 5%, 0.8);
-  color: var(--white);
-  z-index: 1;
-  padding: 25px;
-  overflow-y: scroll;
-  overflow-x: hidden;
-}
-
-#level-panel {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  height: 100%;
-  background-color: hsla(240, 10%, 5%, 0.8);
+  background-color: hsla(240, 10%, 5%, 0.9);
   color: var(--white);
   z-index: 1;
   padding: 25px;
