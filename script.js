@@ -35,7 +35,7 @@ var level_gallery       = document.getElementById("level-gallery");
 
 // Configuration
 var exercise_mode = true;
-var current_execise = 0; // overridden when loading persistent data
+var current_exercise = 0; // overridden when loading persistent data
 const version =1; // for import/export
 
 
