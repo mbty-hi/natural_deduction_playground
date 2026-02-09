@@ -144,7 +144,8 @@
         "
       ></input>
       <div
-        class=rules style="display: flex; flex-wrap: wrap; width: fit-content;"
+        class=rules
+        style="display: flex; flex-wrap: wrap; width: fit-content; margin-bottom: -10px;"
         onmousedown="event.preventDefault()"
       >
         <div
@@ -165,6 +166,26 @@
         <div
           class="rule-s pseudo-button"
           onmousedown="event.preventDefault()" onclick="insert_special_symbol(this)">&#x2192;</div>
+      </div>
+      <div
+        class=rules style="display: flex; flex-wrap: wrap; width: fit-content; margin-top: 0;"
+        onmousedown="event.preventDefault()"
+      >
+        <div
+          class="rule-s pseudo-button"
+          onmousedown="event.preventDefault()" onclick="insert_special_symbol(this)">A</div>
+        <div
+          class="rule-s pseudo-button"
+          onmousedown="event.preventDefault()" onclick="insert_special_symbol(this)">B</div>
+        <div
+          class="rule-s pseudo-button"
+          onmousedown="event.preventDefault()" onclick="insert_special_symbol(this)">C</div>
+        <div
+          class="rule-s pseudo-button"
+          onmousedown="event.preventDefault()" onclick="insert_special_symbol(this)">(</div>
+        <div
+          class="rule-s pseudo-button"
+          onmousedown="event.preventDefault()" onclick="insert_special_symbol(this)">)</div>
       </div>
       <div
         id=input-panel-confirm class=pseudo-button
