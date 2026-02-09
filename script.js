@@ -36,7 +36,7 @@ var level_gallery       = document.getElementById("level-gallery");
 // Configuration
 var exercise_mode = true;
 var current_exercise = 0; // overridden when loading persistent data
-const version =1; // for import/export
+const version = 1; // for import/export
 
 
 // Exercises
@@ -141,7 +141,8 @@ function update_status_of_lower_tree(level) {
 function highlight_cause(node) {
   let known = node.known;
   if (known) {
-    known.id = "known-cause";
+    console.log(known);
+    known.classList.add("known-cause-for-node");
   }
 }
 
@@ -149,7 +150,7 @@ function set_focus(source) {
   if (focus && focus !== source) {
     let known = focus.known;
     if (known) {
-      known.removeAttribute("id");
+      known.classList.remove("known-cause-for-node");
     }
     focus.removeAttribute("id");
   }
@@ -157,6 +158,8 @@ function set_focus(source) {
   focus = source;
   focus.setAttribute("id", "focus");
   update_contextual_actions();
+  update_premises();
+  update_known(focus);
 
   highlight_cause(focus);
 }
@@ -321,7 +324,7 @@ function setup() {
 
   premises_holder.innerHTML = "";
   for (p of premises) {
-    insert_premise(JSON.parse(p));
+    insert_premise(JSON.parse(p), true);
   }
 
   if (exercise_mode) {
@@ -757,8 +760,7 @@ function validate_or_input(parse_res) {
   }
 }
 
-function is_known(expr, node) { // Used to check whether a branch is done and highlight cause
-  // From premisses
+function is_known(expr, node) {
   for (let i = 0; i < premises_holder.children.length; i++) {
     let p = premises_holder.children[i];
     if (p.getAttribute("data-expr") === expr) {
@@ -766,38 +768,16 @@ function is_known(expr, node) { // Used to check whether a branch is done and hi
     }
   }
 
-  // From impl
-  p = node.parentNode;
-  while (p && p.className === "concl") {
-    const attr = JSON.parse(p.children[0].getAttribute("data-expr"));
-    if (attr.type === "Impl") {
-      if (JSON.stringify(attr.e1) === expr) {
-        return p.children[0].children[0];
-      }
-    }
-    p = p.parentNode.parentNode.parentNode.children[2];
-  }
-
-  // From RAA
-  p = node.parentNode;
-  while (p && p.className === "concl") {
-    const attr = JSON.parse(p.children[0].getAttribute("data-expr"));
-    if (attr.type === "False") {
-      const below = p.parentNode.parentNode.parentNode.children[2];
-      const sep_name = p.parentNode.parentNode.parentNode.children[1].children[1];
-      if (sep_name && sep_name.innerHTML == "⊥-elim") {
-        if (below && below.classList.contains("concl")) {
-          const below_attr = JSON.parse(below.children[0].getAttribute("data-expr"));
-          if (JSON.stringify({"type": "Not", "e": below_attr}) === expr) {
-            return below.children[0];
-          }
-        }
-      }
-    }
-    p = p.parentNode.parentNode.parentNode.children[2];
-  }
-
   return null;
+}
+
+function update_known(node) {
+  if (node.classList.contains("known")) {
+    let known_cause = is_known(node.getAttribute("data-expr"), node);
+    if (known_cause) {
+      node.known = known_cause;
+    }
+  }
 }
 
 function add_hyp(tree) {
@@ -823,7 +803,7 @@ function add_hyp(tree) {
   focus.parentNode.parentNode.querySelector(".hyps").appendChild(new_hyp);
   let known = is_known(data_expr, focus);
   if (known) {
-    hyp_expr.className += " known";
+    hyp_expr.classList.add("known");
     hyp_expr.known = known;
   }
   return new_hyp;
@@ -914,12 +894,37 @@ function recheck_status_of_whole_tree() { // Inserting/removing premises can cha
   }
 }
 
-function insert_premise(premise) {
+function append_premise(premise, global = false) {
+  if (!global) {
+    var cross = document.createElement("div");
+    cross.className = "remove-cross pseudo-button";
+    cross.setAttribute("onclick", "remove_premise(this)");
+    cross.innerHTML = "x";
+    premise.appendChild(cross);
+  }
+  premises_holder.appendChild(premise);
+  if (global) {
+    recheck_status_of_whole_tree();
+  }
+}
+
+function insert_premise(premise, global = false, cause = undefined) {
   var new_premise = document.createElement("div");
-  new_premise.className = "expr";
+  new_premise.classList.add("expr");
+  if (global) {
+    new_premise.classList.add("global-premise")
+  } else {
+    new_premise.cause = cause;
+    new_premise.onmouseenter = function () {
+      this.cause.classList.add("known-cause-for-premise");
+    }
+    new_premise.onmouseleave = function () {
+      this.cause.classList.remove("known-cause-for-premise");
+    };
+  }
   new_premise.setAttribute("data-expr", JSON.stringify(premise));
   new_premise.innerHTML = tree_to_html(premise);
-  append_premise(new_premise);
+  append_premise(new_premise, global);
 }
 
 function confirm_input_premise() {
@@ -940,14 +945,54 @@ function remove_premise(premise) {
   recheck_status_of_whole_tree();
 }
 
-function append_premise(premise) {
-  var cross = document.createElement("div");
-  cross.className = "remove-cross pseudo-button";
-  cross.setAttribute("onclick", "remove_premise(this)");
-  cross.innerHTML = "x";
-  premise.appendChild(cross);
-  premises_holder.appendChild(premise);
-  recheck_status_of_whole_tree();
+
+// Local premises management
+// We don't do anything smart for the common case of just moving one step down a branch.
+function clear_old_premises() {
+  let to_remove = [];
+  for (let i = 0; i < premises_holder.children.length; i++) {
+    let p = premises_holder.children[i];
+    if (!p.classList.contains("global-premise")) {
+      to_remove.push(p);
+    }
+  }
+  for (p of to_remove) {
+    p.remove();
+  }
+}
+
+function insert_local_premises() {
+  // From impl
+  let p = focus.parentNode.parentNode.parentNode.parentNode.children[2];
+  while (p && p.className === "concl") {
+    const attr = JSON.parse(p.children[0].getAttribute("data-expr"));
+    if (attr.type === "Impl") {
+      insert_premise(attr.e1, false, p.children[0]);
+    }
+    p = p.parentNode.parentNode.parentNode.children[2];
+  }
+
+  // From RAA
+  p = focus.parentNode;
+  while (p && p.className === "concl") {
+    const attr = JSON.parse(p.children[0].getAttribute("data-expr"));
+    if (attr.type === "False") {
+      const below = p.parentNode.parentNode.parentNode.children[2];
+      const sep_name = p.parentNode.parentNode.parentNode.children[1].children[1];
+      if (sep_name && sep_name.innerHTML == "⊥-elim") {
+        if (below && below.classList.contains("concl")) {
+          const below_attr = JSON.parse(below.children[0].getAttribute("data-expr"));
+          insert_premise({"type": "Not", "e": below_attr}, false, below.children[0]);
+        }
+      }
+    }
+    p = p.parentNode.parentNode.parentNode.children[2];
+  }
+}
+
+function update_premises() {
+  clear_old_premises();
+  insert_local_premises();
 }
 
 

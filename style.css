@@ -329,7 +329,7 @@ p.center {
 #focus {
   filter: none !important;
   cursor: initial !important;
-  outline: 4px solid var(--lblue);
+  outline: 3px solid var(--lblue);
 }
 
 .remove-cross {
@@ -400,6 +400,14 @@ p.center {
   background-color: color-mix(in srgb, hsl(120 30% 50%), hsl(240 10% 35%) 50%) !important;
 }
 
-#known-cause {
-  background-color: color-mix(in srgb, hsl(60  50% 30%), hsl(240 10% 35%) 50%) !important;
+.known-cause-for-node {
+  border-color: var(--green);
+}
+
+.known-cause-for-premise {
+  border-color: var(--green);
+}
+
+.global-premise {
+  background-color: color-mix(in oklab, var(--red), var(--level-c) 50%);
 }
