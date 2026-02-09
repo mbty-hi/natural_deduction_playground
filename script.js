@@ -141,7 +141,6 @@ function update_status_of_lower_tree(level) {
 function highlight_cause(node) {
   let known = node.known;
   if (known) {
-    console.log(known);
     known.classList.add("known-cause-for-node");
   }
 }
@@ -1141,11 +1140,7 @@ slider.addEventListener("mouseleave", stopDragging, false);
 function invert_lightness() {
   const root = document.querySelector(':root');
   const css_variables = [
-    "--black"  , "--level-a", "--level-b", "--level-c", "--white" , "--ghost", "--link" ,
-    "--link-hv", "--link-vs", "--emph"   , "--red"    , "--yellow", "--green", "--cyan" ,
-    "--blue"   , "--magenta", "--lred"   , "--lyellow", "--lgreen", "--lcyan", "--lblue",
-    "--lmagenta"
-
+    "--black"  , "--level-a", "--level-b", "--level-c", "--white" , "--ghost",
   ];
 
   function invert_255(x) { return 255 - x; }

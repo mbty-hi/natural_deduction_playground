@@ -350,7 +350,7 @@ p.center {
   top: 0;
   bottom: 0;
   height: 100%;
-  background-color: hsla(240, 10%, 5%, 0.9);
+  background-color: color-mix(in oklab, var(--black), transparent 10%);
   color: var(--white);
   z-index: 1;
   padding: 25px;
