@@ -188,10 +188,13 @@ p.center {
     background-color: var(--dark);
     color: var(--white);
     font-weight: normal;
+    display: flex !important;
+    align-items: center;
     padding: 8px;
+    gap: 10px;
     margin: 6px;
     width: auto;
-    height: auto;
+    height: 30px;
     text-decoration: none;
   }
 
@@ -201,10 +204,6 @@ p.center {
 
   .gallery-title::after {
     content: ": ";
-  }
-
-  .gallery-description::first-letter {
-    text-transform: lowercase;
   }
 
   .gallery-item > hr {
