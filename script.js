@@ -961,12 +961,14 @@ function clear_old_premises() {
 }
 
 function insert_local_premises() {
+  let to_add = []; // So that new premises appear at the end of the list
+
   // From impl
   let p = focus.parentNode.parentNode.parentNode.parentNode.children[2];
   while (p && p.className === "concl") {
     const attr = JSON.parse(p.children[0].getAttribute("data-expr"));
     if (attr.type === "Impl") {
-      insert_premise(attr.e1, false, p.children[0]);
+      to_add.push([attr.e1, false, p.children[0]]);
     }
     p = p.parentNode.parentNode.parentNode.children[2];
   }
@@ -981,11 +983,16 @@ function insert_local_premises() {
       if (sep_name && sep_name.innerHTML == "⊥-elim") {
         if (below && below.classList.contains("concl")) {
           const below_attr = JSON.parse(below.children[0].getAttribute("data-expr"));
-          insert_premise({"type": "Not", "e": below_attr}, false, below.children[0]);
+          to_add.push([{"type": "Not", "e": below_attr}, false, below.children[0]]);
         }
       }
     }
     p = p.parentNode.parentNode.parentNode.children[2];
+  }
+
+  for (i = to_add.length - 1; i >= 0; --i) {
+    const x = to_add[i];
+    insert_premise(x[0], x[1], x[2]);
   }
 }
 
