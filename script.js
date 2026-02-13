@@ -813,10 +813,10 @@ function recheck_status_of_tree(tree) {
   if (tree.known) {
     tree.known.removeAttribute("id");
   }
+  set_focus(tree);
   let known = is_known(tree.getAttribute("data-expr"), tree);
   if (known) {
     tree.known = known;
-    set_focus(tree);
     clear_above(tree);
     tree.classList.add("known");
     return true;
