@@ -961,13 +961,16 @@ function clear_old_premises() {
 }
 
 function insert_local_premises() {
-  let to_add = []; // So that new premises appear at the end of the list
+  // TODO maintain a more logical order in the list of premises: more local ones should appear
+  // closer to the end.
+  let to_add = []; // This is a cheap way of getting them at least somewhat in order
 
   // From impl
   let p = focus.parentNode.parentNode.parentNode.parentNode.children[2];
   while (p && p.className === "concl") {
     const attr = JSON.parse(p.children[0].getAttribute("data-expr"));
-    if (attr.type === "Impl") {
+    const sep_name = p.parentNode.children[1].children[1];
+    if (sep_name && sep_name.innerHTML == "→-intro" && attr.type === "Impl") {
       to_add.push([attr.e1, false, p.children[0]]);
     }
     p = p.parentNode.parentNode.parentNode.children[2];
